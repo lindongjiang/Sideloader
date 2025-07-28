@@ -1,0 +1,31 @@
+name: Build Sideloader Linux
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install D compiler and dub
+        run: |
+          sudo apt update
+          sudo apt install -y ldc dub
+
+      - name: Build Sideloader
+        run: |
+          dub build --build=release
+          mkdir -p output
+          cp bin/sideloader output/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sideloader-linux
+          path: output/sideloader
